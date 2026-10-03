@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<RecentEntry> _recentHistory = [];
   List<String> _directoryList = [];
 
-  // --- ВОТ ЗДЕСЬ ДОБАВЛЕНО СПИСАНИЕ ПЕРСОНАЛА ---
+  // --- ВОТ ЗДЕСЬ ДОБАВЛЕНО СПИСАНИЕ ПЕРСОНАЛА И ПРОЧЕЕ ---
   final List<String> _documents = [
     'Накладная базар',
     'Накладная метро',
@@ -113,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'Перемещение в заведения',
     'Перемещение Бар-Кухня/Кухня-Бар',
     'Инвентаризация',
+    'Прочее',
   ];
 
   final List<String> _recipients = [
@@ -1486,7 +1487,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Версия 1.4.1 (Списание персонала добавлено)',
+                        'Версия 1.4.2 (Добавлена вкладка Прочее)',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
