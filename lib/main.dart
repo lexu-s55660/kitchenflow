@@ -307,7 +307,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool get _isSumRequired =>
       _selectedDocument == 'Накладная базар' ||
-      _selectedDocument == 'Накладная метро';
+      _selectedDocument == 'Накладная метро' ||
+      _selectedDocument == 'Прочее';
 
   double get _unitPrice {
     final double amount =
@@ -1487,7 +1488,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Версия 1.4.2 (Добавлена вкладка Прочее)',
+                        'Версия 1.4.3 (Добавлена сумма для Прочее)',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
