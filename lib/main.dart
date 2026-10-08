@@ -1168,22 +1168,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                     spacing: 6,
                                     children:
                                         [
-                                          '0,100 кг',
-                                          '0,200 кг',
-                                          '0,500 кг',
-                                          '1 кг / шт',
+                                          '+ 0,05',
+                                          '+ 0,1',
+                                          '+ 0,2',
+                                          '+ 0,25',
+                                          '+ 0,5',
                                         ].map((preset) {
                                           return ActionChip(
                                             label: Text(
                                               preset,
                                               style: const TextStyle(
                                                 fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.deepOrange,
                                               ),
                                             ),
+                                            backgroundColor:
+                                                Colors.deepOrange.shade50,
+                                            side: BorderSide(
+                                              color: Colors.deepOrange.shade200,
+                                            ),
                                             onPressed: () {
-                                              final val = preset.split(' ')[0];
+                                              final valString = preset
+                                                  .replaceAll('+ ', '')
+                                                  .replaceAll(',', '.');
+                                              final double addValue =
+                                                  double.tryParse(valString) ??
+                                                  0;
+
+                                              final String currentText =
+                                                  _amountController.text
+                                                      .replaceAll(',', '.');
+                                              final double currentValue =
+                                                  double.tryParse(
+                                                    currentText,
+                                                  ) ??
+                                                  0;
+
+                                              final double newValue =
+                                                  currentValue + addValue;
+
                                               setState(() {
-                                                _amountController.text = val;
+                                                _amountController.text =
+                                                    newValue
+                                                        .toStringAsFixed(3)
+                                                        .replaceAll(
+                                                          RegExp(
+                                                            r"([.]*0)(?!.*\d)",
+                                                          ),
+                                                          "",
+                                                        )
+                                                        .replaceAll('.', ',');
                                                 _autoCalculateTotalIfLavash();
                                               });
                                             },
@@ -1488,7 +1523,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Версия 1.4.3 (Добавлена сумма для Прочее)',
+                        'Версия 1.4.4 (Калькулятор кнопок Быстро)',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
