@@ -151,6 +151,14 @@ class _SalaryScreenState extends State<SalaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Точный расчет дневщины (2000) + процент от выручки (1.8% если < 99000, иначе 1.9%)
+    final double revenueVal = double.tryParse(_revController.text.replaceAll(',', '.')) ?? 0;
+    const double dailyRate = 2000.0;
+    final double percentRate = revenueVal < 99000 ? 0.018 : 0.019;
+    final double revenueBonus = revenueVal * percentRate;
+    final double totalShiftPay = dailyRate + revenueBonus;
+    final String currentPercentText = revenueVal < 99000 ? '1.8%' : '1.9%';
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -229,9 +237,56 @@ class _SalaryScreenState extends State<SalaryScreen> {
                     children: [
                       Expanded(flex: 2, child: TextField(controller: _dayController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'День (1-31)', border: OutlineInputBorder()))),
                       const SizedBox(width: 8),
-                      Expanded(flex: 3, child: TextField(controller: _revController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Выручка (₽)', border: OutlineInputBorder()))),
+                      Expanded(
+                        flex: 3, 
+                        child: TextField(
+                          controller: _revController, 
+                          keyboardType: TextInputType.number, 
+                          onChanged: (_) => setState(() {}),
+                          decoration: const InputDecoration(labelText: 'Выручка (₽)', border: OutlineInputBorder()),
+                        ),
+                      ),
                     ],
                   ),
+                  // ИНФОРМАЦИОННАЯ СТРОКА ПОД ВЫРУЧКОЙ С РАСЧЕТОМ ДНЕВЩИНЫ И ПРОЦЕНТА
+                  if (revenueVal > 0) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.deepOrange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Дневщина:', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                              const Text('2000.00 ₽', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Процент ($currentPercentText):', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                              Text('${revenueBonus.toStringAsFixed(2)} ₽', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            ],
+                          ),
+                          const Divider(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Итого за день:', style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold, fontSize: 13)),
+                              Text('${totalShiftPay.toStringAsFixed(2)} ₽', style: const TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold, fontSize: 15)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   TextField(controller: _commentController, decoration: const InputDecoration(labelText: 'Долги / Комментарий', prefixIcon: Icon(Icons.comment), border: OutlineInputBorder())),
                   const SizedBox(height: 8),
@@ -358,8 +413,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final double amount = double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0;
     if (amount > 0) {
       if (ingName.contains('ЛАВАШ')) _totalSumController.text = (amount * 17).toStringAsFixed(2);
-      else if (ingName.contains('ЯБАТОН70')) _totalSumController.text = (amount * 70).toStringAsFixed(2);
-      else if (ingName.contains('ЯЧИАБАТТА60')) _totalSumController.text = (amount * 60).toStringAsFixed(2);
+      else if (ingName.contains('БАТОН')) _totalSumController.text = (amount * 70).toStringAsFixed(2);
+      else if (ingName.contains('ЧИАБАТТА')) _totalSumController.text = (amount * 60).toStringAsFixed(2);
     }
   }
 
@@ -800,7 +855,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             SizedBox(height: 8),
                             Text('1. Добавлена новая вкладка "Зарплата" для учета смен.', style: TextStyle(fontSize: 13)),
                             Text('2. Убрана интеграция QR, оставлена полностью темная тема.', style: TextStyle(fontSize: 13)),
-                            Text('3. Цены (Лаваш 17, ЯЧиабатта60 60, ЯБатон70 70).', style: TextStyle(fontSize: 13)),
+                            Text('3. Цены (Лаваш 17, Батон 70, Чиабатта 60).', style: TextStyle(fontSize: 13)),
                             Text('4. Архив корзины перенесен на вкладку Ингредиент.', style: TextStyle(fontSize: 13)),
                             Text('5. Добавлены эмодзи в названия и получателей.', style: TextStyle(fontSize: 13)),
                           ],
