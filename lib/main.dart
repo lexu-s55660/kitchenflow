@@ -101,7 +101,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
   final TextEditingController _commentController = TextEditingController();
 
   bool _hasTaxi = true;
-  bool _hasMultiplier = false; // <-- Галочка для коэффициента 1.2
+  bool _hasMultiplier = false;
 
   @override
   void initState() {
@@ -150,9 +150,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
         'revenue': _revController.text.trim(),
         'taxi': _hasTaxi ? '400' : '',
         'comment': _commentController.text.trim(),
-        'coefficient': _hasMultiplier
-            ? '1.2'
-            : '1', // <-- Отправляем нужный коэффициент на сервер
+        'coefficient': _hasMultiplier ? '1.2' : '1',
       });
       final response = await http
           .post(
@@ -184,13 +182,14 @@ class _SalaryScreenState extends State<SalaryScreen> {
         throw Exception();
       }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('❌ Ошибка отправки.'),
             backgroundColor: Colors.red,
           ),
         );
+      }
     } finally {
       if (mounted) setState(() => _isSending = false);
     }
@@ -211,7 +210,6 @@ class _SalaryScreenState extends State<SalaryScreen> {
     final double percentRate = revenueVal < 99000 ? 0.018 : 0.019;
     final double revenueBonus = revenueVal * percentRate;
 
-    // Пересчет предпросмотра с коэффициентом
     final double currentCoeff = _hasMultiplier ? 1.2 : 1.0;
     final double totalShiftPay = (dailyRate + revenueBonus) * currentCoeff;
 
@@ -749,8 +747,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String _convertEnToRu(String input) {
     final StringBuffer buffer = StringBuffer();
     final lower = input.toLowerCase();
-    for (int i = 0; i < lower.length; i++)
+    for (int i = 0; i < lower.length; i++) {
       buffer.write(_enToRuMap[lower[i]] ?? lower[i]);
+    }
     return buffer.toString();
   }
 
@@ -860,10 +859,11 @@ class _HomeScreenState extends State<HomeScreen> {
           successfullySent.add(entry);
           setModalState(() {});
           sentCount++;
-        } else
+        } else {
           throw Exception();
+        }
       } catch (e) {
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -872,6 +872,7 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: Colors.red,
             ),
           );
+        }
         break;
       }
     }
@@ -1208,13 +1209,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         onPressed: () {
                           setState(() {
-                            if (totalWeight > 0)
+                            if (totalWeight > 0) {
                               _amountController.text = totalWeight
                                   .toStringAsFixed(3)
                                   .replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
-                            if (_isSumRequired && totalPrice > 0)
+                            }
+                            if (_isSumRequired && totalPrice > 0) {
                               _totalSumController.text = totalPrice
                                   .toStringAsFixed(2);
+                            }
                             _autoCalculateTotals();
                           });
                           Navigator.pop(ctx);
@@ -1574,10 +1577,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 if (_isTransfer &&
                                     !_currentRecipients.contains(
                                       _selectedRecipient,
-                                    ))
+                                    )) {
                                   _selectedRecipient = null;
-                                else if (!_isTransfer)
+                                } else if (!_isTransfer) {
                                   _selectedRecipient = null;
+                                }
                               });
                             },
                           ),
@@ -1917,11 +1921,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Row(
+                          const Row(
                             children: [
                               Icon(Icons.table_chart, color: Colors.deepOrange),
-                              const SizedBox(width: 8),
-                              const Text(
+                              SizedBox(width: 8),
+                              Text(
                                 'Таблица учета месяца',
                                 style: TextStyle(
                                   fontSize: 16,
@@ -2133,7 +2137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Версия 1.8.2', // Обновлена версия
+                        'Версия 1.8.2',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
