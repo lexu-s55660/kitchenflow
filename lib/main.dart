@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // ССЫЛКА НА GOOGLE SCRIPT
 const String _webAppUrl =
-    'https://script.google.com/macros/s/AKfycbwKBLV50FffeI2MewkOliDJsg4ZrSA0vXKdnBcII5Ko5ujOlgtORckJ0A0pUeckSiBXkQ/exec';
+    'https://script.google.com/macros/s/AKfycbzlzTt7uorcCFavMXfRtRUV67cHEqEriWscGgPuQ2My5NhTi15RVjwn22BbdKGc_g_1Dg/exec';
 
 void main() {
   runApp(const KitchenFlowApp());
