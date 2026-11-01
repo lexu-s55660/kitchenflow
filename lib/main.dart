@@ -99,7 +99,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
   );
   final TextEditingController _revController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
+
   bool _hasTaxi = true;
+  bool _hasMultiplier = false; // <-- Галочка для коэффициента 1.2
 
   @override
   void initState() {
@@ -148,6 +150,9 @@ class _SalaryScreenState extends State<SalaryScreen> {
         'revenue': _revController.text.trim(),
         'taxi': _hasTaxi ? '400' : '',
         'comment': _commentController.text.trim(),
+        'coefficient': _hasMultiplier
+            ? '1.2'
+            : '1', // <-- Отправляем нужный коэффициент на сервер
       });
       final response = await http
           .post(
@@ -166,6 +171,7 @@ class _SalaryScreenState extends State<SalaryScreen> {
           _revController.clear();
           _commentController.clear();
           _hasTaxi = true;
+          _hasMultiplier = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -204,7 +210,11 @@ class _SalaryScreenState extends State<SalaryScreen> {
     const double dailyRate = 2000.0;
     final double percentRate = revenueVal < 99000 ? 0.018 : 0.019;
     final double revenueBonus = revenueVal * percentRate;
-    final double totalShiftPay = dailyRate + revenueBonus;
+
+    // Пересчет предпросмотра с коэффициентом
+    final double currentCoeff = _hasMultiplier ? 1.2 : 1.0;
+    final double totalShiftPay = (dailyRate + revenueBonus) * currentCoeff;
+
     final String currentPercentText = revenueVal < 99000 ? '1.8%' : '1.9%';
 
     return SingleChildScrollView(
@@ -430,6 +440,28 @@ class _SalaryScreenState extends State<SalaryScreen> {
                               ),
                             ],
                           ),
+                          if (_hasMultiplier) ...[
+                            const SizedBox(height: 4),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Коэффициент:',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                Text(
+                                  'x1.2',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                           const Divider(height: 12),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -473,6 +505,14 @@ class _SalaryScreenState extends State<SalaryScreen> {
                         : Colors.blue.shade400,
                     value: _hasTaxi,
                     onChanged: (val) => setState(() => _hasTaxi = val),
+                  ),
+                  SwitchListTile(
+                    title: const Text('Инвентаризация (Коэф. 1.2)'),
+                    activeColor: _selectedPerson == 'alexei'
+                        ? Colors.deepOrange
+                        : Colors.blue.shade400,
+                    value: _hasMultiplier,
+                    onChanged: (val) => setState(() => _hasMultiplier = val),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
@@ -1309,7 +1349,6 @@ class _HomeScreenState extends State<HomeScreen> {
     String monthTitle = '${monthNames[monthDate.month]} ${monthDate.year}';
     final DateTime anchor = DateTime.utc(2026, 8, 1);
 
-    // ИСПРАВЛЕНИЕ ОШИБКИ: Убрали явное указание >
     final cycle = [
       {'alexei': null, 'denis': 'Денис'},
       {'alexei': null, 'denis': 'Газиз'},
@@ -2094,7 +2133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'Версия 1.8.1',
+                        'Версия 1.8.2', // Обновлена версия
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
@@ -2116,23 +2155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              '1. Добавлена новая вкладка "Зарплата" для учета смен.',
-                              style: TextStyle(fontSize: 13),
-                            ),
-                            Text(
-                              '2. Убрана интеграция QR, оставлена полностью темная тема.',
-                              style: TextStyle(fontSize: 13),
-                            ),
-                            Text(
-                              '3. Цены (Лаваш 17, Батон 70, Чиабатта 60).',
-                              style: TextStyle(fontSize: 13),
-                            ),
-                            Text(
-                              '4. Архив корзины перенесен на вкладку Ингредиент.',
-                              style: TextStyle(fontSize: 13),
-                            ),
-                            Text(
-                              '5. Добавлены эмодзи в названия и получателей.',
+                              '1. Добавлен коэффициент x1.2 для инвентаризации.',
                               style: TextStyle(fontSize: 13),
                             ),
                           ],
